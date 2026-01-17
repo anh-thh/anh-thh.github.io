@@ -182,6 +182,165 @@
               margin: 0 auto;
             ">
               <tbody>
+
+              <!-- SoC Project -->
+              <tr onmouseover="dedup_compress_start()" onmouseout="dedup_compress_stop()" bgcolor="#ffffff">
+                <td colspan="2" style="padding: 0;">
+                  <div class="project-box" style="display: flex; align-items: center;">
+
+                    <!-- LEFT: force a 160×160 box with rounded corners -->
+                    <div style="flex: 0 0 160px; padding: 12px;">
+                      <div
+                        class="one"
+                        style="
+                          position: relative;
+                          width: 160px;
+                          height: 160px;
+                          border-radius: 5px;
+                          overflow: hidden;
+                        "
+                      >
+                        <!-- Hover video (100% of container) -->
+                        <div
+                          class="two"
+                          id="dedup_compress_cover"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            opacity: 0;
+                            transition: opacity 0.2s;
+                          "
+                        >
+                        <img
+                          src="assets/projects/dedup_compress/thumbnail.gif"
+                          style="width: 100%; height: 100%; object-fit: cover;"
+                          alt="Dedup_Compress hover"
+                        />
+                            <source src="assets/projects/dedup_compress/thumbnail.gif" type="video/mp4">
+                          </video>
+                        </div>
+
+                        <!-- Static image now forced to fill 100% × 100% -->
+                        <img
+                          src="assets/projects/dedup_compress/board.png"
+                          style="width: 100%; height: 100%; object-fit: cover;"
+                          alt="Dedup_Compress thumbnail"
+                        />
+                      </div>
+
+                      <script>
+                        function dedup_compress_start() {
+                          document.getElementById("dedup_compress_cover").style.opacity = "1";
+                        }
+                        function dedup_compress_stop() {
+                          document.getElementById("dedup_compress_cover").style.opacity = "0";
+                        }
+                        dedup_compress_stop();
+                      </script>
+                    </div>
+
+                    <!-- RIGHT: text content -->
+                    <div style="flex: 1; padding: 16px;">
+                      <a href="projects_pages/dedup_compress.html" style="text-decoration: none;">
+                        <span class="papertitle">SoC Design for Real-Time Data Deduplication and Compression</span>
+                      </a>
+                      <br>
+                      <a href="projects_pages/dedup_compress.html">project page</a> /
+                      <a href="https://github.com/anh-thh/ESE5320-SOC-PROJECT">code</a>
+                      <p style="margin-top: 8px;">
+                      Developed a high-throughput System-on-Chip (SoC) for real-time data deduplication and compression, integrating content-defined chunking (CDC), SIMD-accelerated SHA256 hashing, and an FPGA-based LZW compressor. Attained over 800 Mb/s end-to-end throughput with a 0.65 compression ratio on the Ultra96-V2 platform.
+                      </p>
+                    </div>
+
+                  </div>
+                </td>
+              </tr>
+
+
+
+              <!-- CSRSPMM project -->
+              <tr onmouseover="csrspmm_start()" onmouseout="csrspmm_stop()" bgcolor="#ffffff">
+                <td colspan="2" style="padding: 0;">
+                  <div class="project-box" style="display: flex; align-items: center;">
+
+                    <!-- LEFT: force a 160×160 box with rounded corners -->
+                    <div style="flex: 0 0 160px; padding: 12px;">
+                      <div
+                        class="one"
+                        style="
+                          position: relative;
+                          width: 160px;
+                          height: 160px;
+                          border-radius: 5px;
+                          overflow: hidden;
+                        "
+                      >
+                        <!-- Hover video (100% of container) -->
+                        <div
+                          class="two"
+                          id="csrspmm_cover"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            opacity: 0;
+                            transition: opacity 0.2s;
+                          "
+                        >
+                          <video
+                            width="100%"
+                            height="100%"
+                            muted
+                            autoplay
+                            loop
+                            style="object-fit: cover;"
+                          >
+                            <source src="assets/projects/csrspmm_core/thumbnail.mp4" type="video/mp4">
+                          </video>
+                        </div>
+
+                        <!-- Static image now forced to fill 100% × 100% -->
+                        <img
+                          src="assets/projects/csrspmm/cover.png"
+                          style="width: 100%; height: 100%; object-fit: cover;"
+                          alt="RISC-V thumbnail"
+                        />
+                      </div>
+
+                      <script>
+                        function csrspmm_start() {
+                          document.getElementById("csrspmm_cover").style.opacity = "1";
+                        }
+                        function csrspmm_stop() {
+                          document.getElementById("csrspmm_cover").style.opacity = "0";
+                        }
+                        csrspmm_stop();
+                      </script>
+                    </div>
+
+                    <!-- RIGHT: text content -->
+                    <div style="flex: 1; padding: 16px;">
+                      <a href="https://github.com/anh-thh/csrspmm" style="text-decoration: none;">
+                        <span class="papertitle">CSRSPMM: Optimized CUDA Kernels for CSR Sparse x Dense MatMul</span>
+                      </a>
+                      <br>
+                      <a href="projects_pages/csrspmm.html">project page</a> /
+                      <a href="https://github.com/anh-thh/csrspmm">code</a>
+                      <p style="margin-top: 8px;">
+                      Developed high-performance CUDA kernels for CSR sparse–dense matrix multiplication, leveraging warp-per-row scheduling, shared-memory buffering, and vectorized memory accesses to improve performance on irregular sparsity patterns compared to cuSPARSE and torch.sparse.
+                      </p>
+                    </div>
+
+                  </div>
+                </td>
+              </tr>
+
+
               <!-- RISC-V project -->
               <tr onmouseover="riscv_start()" onmouseout="riscv_stop()" bgcolor="#ffffff">
                 <td colspan="2" style="padding: 0;">
