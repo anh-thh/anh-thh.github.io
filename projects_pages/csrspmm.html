@@ -84,6 +84,23 @@
       zoom: 0.95;
     }
 
+    /* Code block container */
+    .code-box {
+      background-color: #f3f3f3;   /* light grey */
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 16px;
+      height: 100%;
+    }
+
+    .code-box pre {
+      background-color: transparent; /* inherit grey */
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      white-space: pre;
+    }
+
   </style>
 </head>
 
@@ -106,16 +123,264 @@
       <h2><strong>CSRSPMM: Optimized CUDA Kernels for CSR Sparse x Dense Matrix Multiplication</strong></h2>
     </header>
 
-    <main>
-      <!-- <p> -->
-      <!-- <strong>Update</strong>: I have been offered a Teaching Assistant position for CIS 5710 in Spring 2026. <br> -->
-      <!-- </p> -->
+  <main>
+  
+    <!-- Project Overview -->
+    <!-- <section class="mb-5"> -->
+    <!--   <h4><strong>Overview</strong></h4> -->
+    <!--   <p> -->
+    <!--     This project presents <strong>CSRSPMM</strong>, a set of highly optimized CUDA kernels -->
+    <!--     for sparse matrix–dense matrix multiplication (SpMM) using the CSR format. -->
+    <!--     The goal is to address performance limitations of existing libraries such as -->
+    <!--     cuSPARSE and <code>torch.sparse</code> when handling irregular sparsity patterns -->
+    <!--     commonly found in modern machine learning workloads. -->
+    <!--   </p> -->
+    <!--   <p> -->
+    <!--     The full source code and report are available on GitHub: -->
+    <!--     <a href="https://github.com/anh-thh/csrspmm" target="_blank" rel="noopener noreferrer"> -->
+    <!--       https://github.com/anh-thh/csrspmm -->
+    <!--     </a>. -->
+    <!--   </p> -->
+    <!-- </section> -->
+  
+    <!-- Motivation -->
+    <section class="mb-5">
+      <!-- <h4><strong>Motivation</strong></h4> -->
       <p>
-        The project source code and report are available at
-        <a href="https://github.com/anh-thh/csrspmm" target="_blank" rel="noopener noreferrer">
-          https://github.com/anh-thh/csrspmm
-        </a>.
+      Sparse matrix–dense matrix multiplication (SpMM) is a core operation in many ML systems, including sparse linear layers, graph neural networks, and recommendation systems. Despite its importance, existing GPU libraries often struggle to efficiently handle irregular, unstructured sparsity patterns. Libraries such as cuSPARSE and PyTorch’s sparse operators incur overhead from metadata processing and edge-case handling; hence, often underperform when it comes to unstructured sparsity. This motivates the need for dedicated CUDA kernels specifically optimized for CSR-based SpMM workloads.
       </p>
+    </section>
+  
+    <!-- Background -->
+    <section class="mb-5">
+      <h4><strong>Background</strong></h4>
+      <p>
+        The Compressed Sparse Row (CSR) format stores only non-zero values using three arrays: <code>row_ptr</code>, <code>col_idx</code>, and <code>values</code>. This format is well-suited for unstructured sparsity as it offers high compression rates but introduces challenges for efficient parallel execution on GPUs.
+      </p>
+    </section>
+ 
+    <!-- Contributions -->
+     <section class="mb-5">
+      <h4><strong>Contributions</strong></h4>
+      <ul>
+        <li>
+          Leveraged warp-per-row execution, shared memory buffering, and vectorized memory access to improve data reutilization and reduce global load/store traffic.
+        </li>
+        <li>
+          Designed and implemented optimized CUDA kernels for CSR SpMM, outperforming vendor SOTA cuSPARSE.
+        </li>
+        <li>
+          Provided a Python API supporting seamless integration with PyTorch and outperforming <code>torch.sparse</code>.
+        </li>
+      </ul>
+    </section> 
+
+
+    <!-- Methods -->
+    <section class="mb-5">
+      <h4><strong>Methods</strong></h4>
+      <p>
+        This project explores two scheduling strategies:
+      <ul>
+        <li><strong>Element-wise</strong>: One thread computes one output element.</li>
+        <li><strong>Warp-Per-Row (WPR)</strong>: Each warp processes an entire sparse row.</li>
+      </ul>
+      </p>
+
+    <section class="mb-5">
+      <div class="row g-4">
+
+        <!-- Naive -->
+        <div class="col-md-6">
+          <div class="code-box">
+            <div class="code-title">Element-wise</div>
+            <pre><code>
+sum = 0
+for each nonzero entry j in sparse row:
+    A_col = column_index[j]
+    A_val = value[j]
+    sum += A_val * B[A_col, col]
+            </code></pre>
+          </div>
+        </div>
+
+        <!-- WarpPerRow -->
+        <div class="col-md-6">
+          <div class="code-box">
+            <div class="code-title">WarpPerRow (WPR)</div>
+            <pre><code>
+for each assigned output column col = lane, lane+32, lane+64, ... &lt; K:
+    sum = 0
+    for each nonzero j in this sparse row:
+        a = value[j]
+        c = column_index[j]
+        sum += a * B[c, col]
+
+    C[row, col] = alpha * sum + beta * old_value
+            </code></pre>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+      <p>
+      The element-wise approach appears lighter in terms of time complexity; however, the length of its loop depends on the number of nonzero elements in each row, which can be highly irregular (this makes optimization difficult).       
+      </p>
+      <p>
+      In contrast, although the warp-per-row (WPR) approach relies on nested loops, its outer loop has a predictable structure, facilitating loop unrolling and vectorization. Warp-level scheduling also improves intra-warp synchronization and reduces execution stalls.
+      </p>
+      <p>
+        The following optimization techniques are also applied:
+      <ul>
+          <li><strong>Vectorized load/store:</strong>: CUDA cores support loading and storing packed vectors of up to 4x <code>float32</code> values => simplifies loop and reduces the instruction count.</li>
+          <li><strong>Shared memory buffering</strong>: Since matrix tiles are reused multiple times during computation, they can be cooperatively loaded (by warps) into shared memory => reduces global memory traffic and enables frequently accessed data to be served with lower latency</li>
+      </ul>
+      </p>
+    </section>
+  
+    <!-- Experimental Setup -->
+    <section class="mb-5">
+      <h4><strong>Experiments</strong></h4>
+      <p>
+        Experiments were conducted on an NVIDIA GeForce RTX 4070 GPU.
+        Performance was evaluated across multiple matrix sizes and sparsity levels.
+      </p>
+
+      <ul>
+        <li>
+          <strong>Matrix sizes</strong>:
+          <ul>
+            <li>Small: <code>[512, 1024] × [1024, 64]</code></li>
+            <li>Medium: <code>[1024, 2048] × [2048, 128]</code></li>
+            <li>Large: <code>[4096, 4096] × [4096, 128]</code></li>
+            <li>XL: <code>[8192, 4096] × [4096, 256]</code></li>
+          </ul>
+        </li>
+        <li><strong>Densities</strong>: 0.01 to 0.30</li>
+        <li><strong>Baselines</strong>: cuSPARSE and PyTorch sparse operators</li>
+      </ul>
+    </section>
+
+    <!-- Results -->
+    <section class="mb-5">
+      <h4><strong>Results</strong></h4>
+
+      <table class="table table-bordered text-center w-75 mx-auto">
+        <caption class="text-center fst-italic">
+          Customized kernels vs cuSPARSE
+        </caption>
+        <thead class="table-light">
+          <tr>
+            <th>Algorithm</th>
+            <th>Mean GFLOPS</th>
+            <th>Mean Speedup</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>WarpPerRowFp4</td>
+            <td>727</td>
+            <td>1.483</td>
+          </tr>
+          <tr>
+            <td>WarpPerRowSmemFp4</td>
+            <td>595</td>
+            <td>1.294</td>
+          </tr>
+          <tr>
+            <td>Element-wise</td>
+            <td>531</td>
+            <td>1.161</td>
+          </tr>
+          <tr>
+            <td>WarpPerRowSmem</td>
+            <td>520</td>
+            <td>1.134</td>
+          </tr>
+          <tr class="fst-italic">
+            <td>cuSPARSE</td>
+            <td>488</td>
+            <td>1.000</td>
+          </tr>
+          <tr>
+            <td>WarpPerRow</td>
+            <td>444</td>
+            <td>0.964</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="table table-bordered text-center w-75 mx-auto">
+        <caption class="text-center fst-italic">
+            Customized Python APIs vs <code>torch.sparse</code>
+        </caption>
+        <thead class="table-light">
+          <tr>
+            <th>Algorithm</th>
+            <th>Mean GFLOPS</th>
+            <th>Mean Speedup</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>WarpPerRowSmemFp4</td>
+            <td>479</td>
+            <td>2.297</td>
+          </tr>
+          <tr>
+            <td>WarpPerRowFp4</td>
+            <td>466</td>
+            <td>2.267</td>
+          </tr>
+          <tr class="fst-italic">
+            <td>torch.sparse.addmm</td>
+            <td>347</td>
+            <td>1.547</td>
+          </tr>
+          <tr>
+            <td>WarpPerRowSmem</td>
+            <td>324</td>
+            <td>1.702</td>
+          </tr>
+          <tr>
+            <td>Element-wise</td>
+            <td>310</td>
+            <td>1.633</td>
+          </tr>
+          <tr>
+            <td>WarpPerRow</td>
+            <td>275</td>
+            <td>1.553</td>
+          </tr>
+          <tr class="fst-italic">
+            <td>torch.sparse.mm</td>
+            <td>240</td>
+            <td>1.000</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        In summary, our kernels are:
+      <ul>
+        <li><strong>1.48x faster</strong> than cuSPARSE</li>
+        <li><strong>1.38x faster</strong> than torch.sparse.addmm</li>
+        <li><strong>2.30x faster</strong> than torch.sparse.mm</li>
+      </ul>
+      </p>
+
+    </section>
+  
+    <p>
+      Source code is available on GitHub:
+      <a href="https://github.com/anh-thh/csrspmm" target="_blank" rel="noopener noreferrer">
+        https://github.com/anh-thh/csrspmm
+      </a>.
+    </p>
+  
+  </main>
+
 
   <!-- ======== SCROLL PROGRESS SCRIPT ======== -->
   <script>
