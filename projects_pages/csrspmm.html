@@ -156,7 +156,22 @@
       <h4><strong>Background</strong></h4>
       <p>
         The Compressed Sparse Row (CSR) format stores only non-zero values using three arrays: <code>row_ptr</code>, <code>col_idx</code>, and <code>values</code>. This format is well-suited for unstructured sparsity as it offers high compression rates but introduces challenges for efficient parallel execution on GPUs.
+
       </p>
+      <div class="text-center d-flex flex-column align-items-center">
+        <img
+          src="../../assets/projects/csrspmm/csr.gif"
+          alt="CSR animation"
+          style="max-width: 50%; height: auto;"
+        >
+  
+        <p class="mt-2">
+          Compressed Sparse Row (CSR) format
+          <a href="https://matteding.github.io/2019/04/25/sparse-matrices/" target="_blank">
+            [source]
+          </a>
+        </p>
+      </div>
     </section>
  
     <!-- Contributions -->
