@@ -248,7 +248,7 @@ for each assigned output column col = lane, lane+32, lane+64, ... &lt; K:
       <p>
         The following optimization techniques are also applied:
       <ul>
-          <li><strong>Vectorized load/store:</strong>: CUDA cores support loading and storing packed vectors of up to 4x <code>float32</code> values => simplifies loop and reduces the instruction count.</li>
+          <li><strong>Vectorized load/store</strong>: CUDA cores support loading and storing packed vectors of up to 4x <code>float32</code> values => simplifies loop and reduces the instruction count.</li>
           <li><strong>Shared memory buffering</strong>: Since matrix tiles are reused multiple times during computation, they can be cooperatively loaded (by warps) into shared memory => reduces global memory traffic and enables frequently accessed data to be served with lower latency</li>
       </ul>
       </p>
