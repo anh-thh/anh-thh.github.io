@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>"CSRSPMM: Optimized CUDA Kernels for CSR Sparse x Dense Matrix Multiplication"</title>
+  <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+
+  <style>
+    :root {
+      --max-width: 864px;
+      --accent: #007bff;
+      --pad-x: 1rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      margin-bottom: 40px;
+      zoom: 0.95;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+    .navbar__inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      padding: 8px var(--pad-x);
+      gap: 20px;
+    }
+    .navbar__brand {
+      margin-right: auto;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: #333;
+    }
+    .navbar__link {
+      font-size: 1rem;
+      text-decoration: none;
+      color: #333;
+    }
+    .navbar__brand:hover,
+    .navbar__link:hover { color: var(--accent); }
+
+    .scroll-progress {
+      height: 2px;
+      width: 0%;
+      background-color: var(--accent);
+      transition: width 0.1s ease-out;
+    }
+
+    /* ── Page layout ── */
+    .page-wrapper {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.5rem var(--pad-x) 0;
+    }
+
+    /* ── Typography ── */
+    .page-wrapper p,
+    .page-wrapper li {
+      text-align: justify;
+      overflow-wrap: break-word;
+    }
+
+    /* ── Images ── */
+    .page-wrapper img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ── Figure rows ── */
+    .figure-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .figure-row figure {
+      flex: 1 1 200px;
+      max-width: 400px;
+      text-align: center;
+    }
+    .figure-row figure.figure--sm { max-width: 300px; }
+    .figure-row figure.figure--lg { max-width: 550px; }
+    .figure-row figure.figure--xs { max-width: 200px; }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="navbar__inner">
+      <a href="../../index.html"          class="navbar__brand">Anh Tran</a>
+      <a href="../../index.html#about"    class="navbar__link">about</a>
+      <a href="../../index.html#projects" class="navbar__link">projects</a>
+      <a href="../../misc/misc.html"      class="navbar__link">misc</a>
+      <a href="../../index.html#contact"  class="navbar__link">contact</a>
+    </div>
+    <div class="scroll-progress" id="scroll-progress"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <header style="text-align:center; margin-bottom: 2rem;">
+      <h2>"CSRSPMM: Optimized CUDA Kernels for CSR Sparse × Dense Matrix Multiplication"</h2>
+    </header>
+    <main>
+      <style>
+  .code-box {
+    background-color: #f3f3f3;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 16px;
+    height: 100%;
+  }
+  .code-box pre {
+    background-color: transparent;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: pre;
+  }
+  .code-box .code-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+</style>
+
+<!-- ======================= Motivation -->
+<section>
+  <p>
+    Sparse matrix–dense matrix multiplication (SpMM) is a core operation in many ML systems,
+    including sparse linear layers, graph neural networks, and recommendation systems. Despite its
+    importance, existing GPU libraries often struggle with irregular, unstructured sparsity patterns.
+    Libraries such as cuSPARSE and PyTorch's sparse operators incur overhead from metadata processing
+    and edge-case handling, and hence often underperform with unstructured sparsity. This motivates
+    the need for dedicated CUDA kernels specifically optimized for CSR-based SpMM workloads.
+  </p>
+</section>
+
+<!-- ======================= Background -->
+<section id="background">
+  <h4>Background</h4>
+
+  <p>
+    The Compressed Sparse Row (CSR) format stores only non-zero values using three arrays:
+    <code>row_ptr</code>, <code>col_idx</code>, and <code>values</code>. This format is well-suited
+    for unstructured sparsity as it offers high compression rates, but introduces challenges for
+    efficient parallel execution on GPUs.
+  </p>
+
+  <figure style="text-align:center;">
+    <img src="./csr.gif" alt="CSR format animation" style="max-width:70%;">
+    <figcaption>
+      Compressed Sparse Row (CSR) format
+      <a href="https://matteding.github.io/2019/04/25/sparse-matrices/" target="_blank" rel="noopener">[source]</a>
+    </figcaption>
+  </figure>
+</section>
+
+<!-- ======================= Contributions -->
+<section id="contributions">
+  <h4>Contributions</h4>
+
+  <ul>
+    <li>
+      Leveraged warp-per-row execution, shared memory buffering, and vectorized memory access to
+      improve data reutilization and reduce global load/store traffic.
+    </li>
+    <li>
+      Designed and implemented optimized CUDA kernels for CSR SpMM, outperforming vendor SOTA cuSPARSE.
+    </li>
+    <li>
+      Provided a Python API supporting seamless integration with PyTorch, outperforming
+      <code>torch.sparse</code>.
+    </li>
+  </ul>
+</section>
+
+<!-- ======================= Methods -->
+<section id="methods">
+  <h4>Methods</h4>
+
+  <p>This project explores two scheduling strategies:</p>
+  <ul>
+    <li><strong>Element-wise</strong>: One thread computes one output element.</li>
+    <li><strong>Warp-Per-Row (WPR)</strong>: Each warp processes an entire sparse row.</li>
+  </ul>
+
+  <div class="row g-4" style="margin-bottom: 1rem;">
+    <div class="col-md-6">
+      <div class="code-box">
+        <div class="code-title">Element-wise</div>
+        <pre><code>sum = 0
+for each nonzero entry j in sparse row:
+    A_col = column_index[j]
+    A_val = value[j]
+    sum += A_val * B[A_col, col]</code></pre>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="code-box">
+        <div class="code-title">WarpPerRow (WPR)</div>
+        <pre><code>for each col = lane, lane+32, ... &lt; K:
+    sum = 0
+    for each nonzero j in sparse row:
+        a = value[j]
+        c = column_index[j]
+        sum += a * B[c, col]
+    C[row, col] = alpha*sum + beta*old</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <p>
+    The element-wise approach appears lighter in time complexity; however, its loop length depends on
+    the number of nonzero elements per row, which can be highly irregular and difficult to optimize.
+  </p>
+  <p>
+    In contrast, the WPR approach has a predictable outer loop structure, facilitating loop unrolling
+    and vectorization. Warp-level scheduling also improves intra-warp synchronization and reduces
+    execution stalls.
+  </p>
+
+  <p>The following optimization techniques are also applied:</p>
+  <ul>
+    <li>
+      <strong>Vectorized load/store</strong>: Loading packed vectors of up to 4×
+      <code>float32</code> values simplifies the loop and reduces instruction count.
+    </li>
+    <li>
+      <strong>Shared memory buffering</strong>: Matrix tiles reused during computation are
+      cooperatively loaded into shared memory, reducing global memory traffic and serving
+      frequently accessed data with lower latency.
+    </li>
+  </ul>
+</section>
+
+<!-- ======================= Experiments -->
+<section id="experiments">
+  <h4>Experiments</h4>
+
+  <p>
+    Experiments were conducted on an NVIDIA GeForce RTX 4070 GPU, evaluated across multiple matrix
+    sizes and sparsity levels.
+  </p>
+  <ul>
+    <li>
+      <strong>Matrix sizes</strong>:
+      <ul>
+        <li>Small: <code>[512, 1024] × [1024, 64]</code></li>
+        <li>Medium: <code>[1024, 2048] × [2048, 128]</code></li>
+        <li>Large: <code>[4096, 4096] × [4096, 128]</code></li>
+        <li>XL: <code>[8192, 4096] × [4096, 256]</code></li>
+      </ul>
+    </li>
+    <li><strong>Densities</strong>: 0.01 to 0.30</li>
+    <li><strong>Baselines</strong>: cuSPARSE and PyTorch sparse operators</li>
+  </ul>
+</section>
+
+<!-- ======================= Results -->
+<section id="results">
+  <h4>Results</h4>
+
+  <table class="table table-bordered text-center w-75 mx-auto" style="margin-bottom: 1.5rem;">
+    <caption class="text-center fst-italic">Customized kernels vs cuSPARSE</caption>
+    <thead class="table-light">
+      <tr><th>Algorithm</th><th>Mean GFLOPS</th><th>Mean Speedup</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>WarpPerRowFp4</td><td>727</td><td>1.483</td></tr>
+      <tr><td>WarpPerRowSmemFp4</td><td>595</td><td>1.294</td></tr>
+      <tr><td>Element-wise</td><td>531</td><td>1.161</td></tr>
+      <tr><td>WarpPerRowSmem</td><td>520</td><td>1.134</td></tr>
+      <tr class="fst-italic"><td>cuSPARSE</td><td>488</td><td>1.000</td></tr>
+      <tr><td>WarpPerRow</td><td>444</td><td>0.964</td></tr>
+    </tbody>
+  </table>
+
+  <table class="table table-bordered text-center w-75 mx-auto" style="margin-bottom: 1.5rem;">
+    <caption class="text-center fst-italic">Customized Python APIs vs <code>torch.sparse</code></caption>
+    <thead class="table-light">
+      <tr><th>Algorithm</th><th>Mean GFLOPS</th><th>Mean Speedup</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>WarpPerRowSmemFp4</td><td>479</td><td>2.297</td></tr>
+      <tr><td>WarpPerRowFp4</td><td>466</td><td>2.267</td></tr>
+      <tr class="fst-italic"><td>torch.sparse.addmm</td><td>347</td><td>1.547</td></tr>
+      <tr><td>WarpPerRowSmem</td><td>324</td><td>1.702</td></tr>
+      <tr><td>Element-wise</td><td>310</td><td>1.633</td></tr>
+      <tr><td>WarpPerRow</td><td>275</td><td>1.553</td></tr>
+      <tr class="fst-italic"><td>torch.sparse.mm</td><td>240</td><td>1.000</td></tr>
+    </tbody>
+  </table>
+
+  <p>In summary, our kernels are:</p>
+  <ul>
+    <li><strong>1.48×</strong> faster than cuSPARSE</li>
+    <li><strong>1.38×</strong> faster than torch.sparse.addmm</li>
+    <li><strong>2.30×</strong> faster than torch.sparse.mm</li>
+  </ul>
+</section>
+
+<p style="margin-top: 2rem;">
+  Source code is available on GitHub:
+  <a href="https://github.com/anh-thh/csrspmm" target="_blank" rel="noopener">github.com/anh-thh/csrspmm</a>.
+</p>
+    </main>
+  </div>
+
+  <script>
+    const bar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      bar.style.width = (pct * 100) + '%';
+    });
+  </script>
+
+</body>
+</html>

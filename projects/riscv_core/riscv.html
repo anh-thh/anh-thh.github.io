@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pipelined RISC-V Processor</title>
+  <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+
+  <style>
+    :root {
+      --max-width: 864px;
+      --accent: #007bff;
+      --pad-x: 1rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      margin-bottom: 40px;
+      zoom: 0.95;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+    .navbar__inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      padding: 8px var(--pad-x);
+      gap: 20px;
+    }
+    .navbar__brand {
+      margin-right: auto;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: #333;
+    }
+    .navbar__link {
+      font-size: 1rem;
+      text-decoration: none;
+      color: #333;
+    }
+    .navbar__brand:hover,
+    .navbar__link:hover { color: var(--accent); }
+
+    .scroll-progress {
+      height: 2px;
+      width: 0%;
+      background-color: var(--accent);
+      transition: width 0.1s ease-out;
+    }
+
+    /* ── Page layout ── */
+    .page-wrapper {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.5rem var(--pad-x) 0;
+    }
+
+    /* ── Typography ── */
+    .page-wrapper p,
+    .page-wrapper li {
+      text-align: justify;
+      overflow-wrap: break-word;
+    }
+
+    /* ── Images ── */
+    .page-wrapper img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ── Figure rows ── */
+    .figure-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .figure-row figure {
+      flex: 1 1 200px;
+      max-width: 400px;
+      text-align: center;
+    }
+    .figure-row figure.figure--sm { max-width: 300px; }
+    .figure-row figure.figure--lg { max-width: 550px; }
+    .figure-row figure.figure--xs { max-width: 200px; }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="navbar__inner">
+      <a href="../../index.html"          class="navbar__brand">Anh Tran</a>
+      <a href="../../index.html#about"    class="navbar__link">about</a>
+      <a href="../../index.html#projects" class="navbar__link">projects</a>
+      <a href="../../misc/misc.html"      class="navbar__link">misc</a>
+      <a href="../../index.html#contact"  class="navbar__link">contact</a>
+    </div>
+    <div class="scroll-progress" id="scroll-progress"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <header style="text-align:center; margin-bottom: 2rem;">
+      <h2>Pipelined RISC-V Processor</h2>
+    </header>
+    <main>
+      <blockquote>
+<p><strong>Update:</strong> I have been offered a Teaching Assistant position for CIS 5710 in Spring 2026.</p>
+</blockquote>
+<p>This project was carried out by myself and my teammate, Khanh Tran (Eddie), as part of the
+CIS 5710 course during Spring 2025 at the University of Pennsylvania.</p>
+<figure style="text-align:center; margin: 2rem 0;">
+  <img src="./system_architecture.png" alt="System Architecture">
+</figure>
+
+<p>In this project, we developed a custom 32-bit RISC-V core using SystemVerilog. The technical
+specifications of our design are as follows:</p>
+<ul>
+<li><strong>Architecture:</strong> 32-bit RISC-V core implemented in SystemVerilog</li>
+<li><strong>Pipeline:</strong> Five-stage fully pipelined datapath featuring:<ul>
+<li>Full bypassing (forwarding) logic</li>
+<li>Comprehensive stall control to handle data and control hazards</li>
+</ul>
+</li>
+<li><strong>Cache:</strong><ul>
+<li>Direct-mapped data cache (D$)</li>
+<li>Direct-mapped instruction cache (I$)</li>
+<li>Communication with main memory via the AXI4-Lite protocol</li>
+</ul>
+</li>
+<li><strong>Arithmetic Logic:</strong><ul>
+<li>Carry-Lookahead Adder (CLA) for low-latency arithmetic operations</li>
+<li>8-cycle divider to reduce critical path delays and improve max clock frequency</li>
+</ul>
+</li>
+</ul>
+<p>Our implementation is functionally correct, as verified by the Dhrystone benchmark. The design
+was synthesized using the Yosys toolchain and deployed on a Lattice ECP5 FPGA board.</p>
+<p>Performance metrics and resource utilization of our design are reported in the table below:</p>
+<table class="table table-bordered text-center w-75 mx-auto">
+<thead>
+<tr>
+<th>Metric</th>
+<th>Without caches</th>
+<th>With caches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Max frequency</td>
+<td>30.78 MHz</td>
+<td>26.64 MHz</td>
+</tr>
+<tr>
+<td>LUT</td>
+<td>30.9%</td>
+<td>22.8%</td>
+</tr>
+<tr>
+<td>Flip-Flop</td>
+<td>4.1%</td>
+<td>3.9%</td>
+</tr>
+<tr>
+<td>Multiplier Blocks</td>
+<td>3.2%</td>
+<td>2.6%</td>
+</tr>
+<tr>
+<td>BRAM</td>
+<td>1.0%</td>
+<td>15.4%</td>
+</tr>
+<tr>
+<td>I/O Blocks</td>
+<td>4.4%</td>
+<td>4.4%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> Since the <em>with-caches</em> version was later developed, several logic optimizations were
+made by us. As a result, its LUT and flip-flop usage is slightly more efficient compared to its
+predecessor.</p>
+<p style="text-align:center; font-style:italic; margin-top: 2rem;">
+  As part of the course policy, we are unable to publicly share our code. However, our full
+  SystemVerilog implementation and other technical details can be made available upon request
+  (typically shared in cases like recruitment processes or work unrelated to CIS 5710).
+</p>
+    </main>
+  </div>
+
+  <script>
+    const bar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      bar.style.width = (pct * 100) + '%';
+    });
+  </script>
+
+</body>
+</html>

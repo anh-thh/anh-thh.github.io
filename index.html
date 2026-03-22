@@ -1,0 +1,303 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Anh Tran</title>
+  <meta name="author" content="Anh Tran">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; zoom: 0.95; }
+    html { scroll-behavior: smooth; }
+    body { font-family: sans-serif; font-size: 14px; color: #222; }
+
+    /* ── Navbar ── */
+    nav {
+      position: sticky; top: 0; z-index: 1000;
+      background-color: rgba(255,255,255,0.95);
+      box-shadow: 0 1px 0 #e0e0e0;
+    }
+    .navbar__inner {
+      max-width: 864px; margin: 0 auto;
+      display: flex; justify-content: flex-end;
+      padding: 8px 1rem; gap: 20px;
+    }
+    .navbar__link { font-size: 1rem; color: #333; text-decoration: none; }
+    .navbar__link:hover { color: #1772d0; }
+    .scroll-progress { height: 2px; width: 0%; background: #1772d0; transition: width 0.1s; }
+
+    /* ── Bio ── */
+    .bio-name { font-size: 34px; font-weight: 500; text-align: center; margin-bottom: 12px; }
+    .bio-links { text-align: center; margin-top: 8px; }
+
+    /* ── Section headings ── */
+    .section-heading { padding: 16px; }
+    .section-heading h2 { margin: 0 0 6px; font-size: 24px; }
+    .section-heading p  { margin: 0; }
+
+    /* ── Thumbnail hover swap ── */
+    .thumb-wrap {
+      position: relative;
+      width: 160px; height: 160px;
+    }
+    .thumb-wrap img,
+    .thumb-wrap video {
+      width: 160px; height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+    .thumb-hover {
+      position: absolute; inset: 0;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    /* ── Project entries ── */
+    .papertitle { font-weight: 600; }
+    .proj-desc {
+      text-align: justify;
+      text-align-last: left;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+      word-spacing: -0.01em;
+      margin: 6px 0 0;
+    }
+
+    /* ── Footer ── */
+    .footer { text-align: center; font-size: 12px; padding: 0 0 16px; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="navbar__inner">
+      <a href="#about"           class="navbar__link">about</a>
+      <a href="#projects"        class="navbar__link">projects</a>
+      <a href="./misc/misc.html" class="navbar__link">misc</a>
+      <a href="#contact"         class="navbar__link">contact</a>
+    </div>
+    <div class="scroll-progress" id="scroll-progress"></div>
+  </nav>
+
+  <table style="width:100%;max-width:864px;border:0;border-spacing:0;border-collapse:separate;margin:0 auto;"><tbody>
+  <tr><td>
+
+    <!-- ── About ── -->
+    <table id="about" style="width:100%;border:0;border-spacing:0;border-collapse:separate;margin:0 auto;"><tbody>
+      <tr>
+        <td style="padding:2.5%;width:63%;vertical-align:middle;">
+          <p class="bio-name">Anh Tran</p>
+          <p>
+  I am currently an Electrical Engineering Master's student at the
+  <a href="https://www.seas.upenn.edu/">University of Pennsylvania</a>.
+  I earned my Bachelor's degree in Electrical Engineering from
+  <a href="https://cecs.vinuni.edu.vn/">VinUniversity</a>.
+</p>
+<p>
+  My background covers computer architecture, parallel computing, FPGA, and deep learning.
+  I am particularly passionate about bridging these fields to drive innovation and efficiency.
+</p>
+          <p class="bio-links">
+            <a href="mailto:anhthh@seas.upenn.edu">Email</a> &nbsp;/&nbsp;
+<a href="https://www.linkedin.com/in/anh-thh/">LinkedIn</a> &nbsp;/&nbsp;
+<a href="https://www.facebook.com/anh.tranhuyhoang">Facebook</a> &nbsp;/&nbsp;
+<a href="https://github.com/anh-thh">Github</a>
+          </p>
+        </td>
+        <td style="padding:2.5%;width:37%;max-width:37%;vertical-align:middle;">
+          <a href="./prof_pic.png">
+            <img src="./prof_pic.png" alt="Profile photo"
+                 style="width:100%;max-width:100%;object-fit:cover;border-radius:50%;">
+          </a>
+        </td>
+      </tr>
+    </tbody></table>
+
+    <!-- ── Projects heading ── -->
+    <table id="projects" style="width:100%;border:0;border-spacing:0;border-collapse:separate;margin:0 auto;"><tbody>
+      <tr>
+        <td class="section-heading">
+          <h2>Projects</h2>
+          <p>I mainly work on computer architecture, digital design, and machine learning systems. In my free time, I also enjoy exploring computer vision, control, and robotics.</p>
+        </td>
+      </tr>
+    </tbody></table>
+
+    <!-- ── Project rows ── -->
+    <table style="width:100%;border:0;border-spacing:0 10px;border-collapse:separate;margin:0 auto;"><tbody>
+      
+      <tr onmouseover="hoverShow('dedup')" onmouseout="hoverHide('dedup')">
+        <td style="padding:16px;width:20%;vertical-align:middle;">
+          <div class="thumb-wrap">
+            <img src="./projects/dedup_compress/board.png" alt="SoC Design for Real-Time Data Deduplication and Compression">
+            <div class="thumb-hover" id="dedup-hover">
+              <img src="projects/dedup_compress/thumbnail.gif" alt="">
+            </div>
+          </div>
+        </td>
+        <td style="padding:8px 20px;width:80%;vertical-align:middle;">
+          <a href="./projects/dedup_compress/dedup_compress.html"><span class="papertitle">SoC Design for Real-Time Data Deduplication and Compression</span></a><br>
+          <a href="./projects/dedup_compress/dedup_compress.html">project page</a> /
+          <a href="https://github.com/anh-thh/ESE5320-SOC-PROJECT">code</a>
+          <p class="proj-desc" lang="en">Designed a full System-on-Chip (SoC) pipeline on the Ultra96-V2 FPGA combining content-defined chunking, SIMD-accelerated SHA256 hashing, and a hardware LZW compressor for real-time deduplication. Achieved over 800 Mb/s end-to-end throughput with a 0.65 compression ratio.</p>
+        </td>
+      </tr>
+
+      <tr onmouseover="hoverShow('csrspmm')" onmouseout="hoverHide('csrspmm')">
+        <td style="padding:16px;width:20%;vertical-align:middle;">
+          <div class="thumb-wrap">
+            <img src="./projects/csrspmm/cover.png" alt="CSRSPMM: Optimized CUDA Kernels for CSR Sparse × Dense MatMul">
+            <div class="thumb-hover" id="csrspmm-hover">
+              <video muted autoplay loop><source src="assets/projects/csrspmm_core/thumbnail.mp4" type="video/mp4"></video>
+            </div>
+          </div>
+        </td>
+        <td style="padding:8px 20px;width:80%;vertical-align:middle;">
+          <a href="https://github.com/anh-thh/csrspmm" target="_blank" rel="noopener"><span class="papertitle">CSRSPMM: Optimized CUDA Kernels for CSR Sparse × Dense MatMul</span></a><br>
+          <a href="https://github.com/anh-thh/csrspmm">code</a>
+          <p class="proj-desc" lang="en">Developed optimized CUDA kernels for CSR sparse–dense matrix multiplication using warp-per-row scheduling, shared-memory buffering, and vectorized loads/stores to handle irregular sparsity patterns. Outperforms cuSPARSE and torch.sparse across various sparsity levels and matrix sizes.</p>
+        </td>
+      </tr>
+
+      <tr onmouseover="hoverShow('riscv')" onmouseout="hoverHide('riscv')">
+        <td style="padding:16px;width:20%;vertical-align:middle;">
+          <div class="thumb-wrap">
+            <img src="./projects/riscv_core/cover_pic.png" alt="Pipelined RISC-V Processor">
+            <div class="thumb-hover" id="riscv-hover">
+              <video muted autoplay loop><source src="projects/riscv_core/thumbnail.mp4" type="video/mp4"></video>
+            </div>
+          </div>
+        </td>
+        <td style="padding:8px 20px;width:80%;vertical-align:middle;">
+          <a href="./projects/riscv_core/riscv.html"><span class="papertitle">Pipelined RISC-V Processor</span></a><br>
+          <a href="./projects/riscv_core/riscv.html">project page</a> /
+          <a href="https://github.com/anh-thh/cis5710-homework.git">code</a>
+          <p class="proj-desc" lang="en">Built a 32-bit RISC-V core in SystemVerilog with a five-stage pipeline, full data forwarding, hazard control, instruction and data caches, and an AXI memory interface. Validated against the official RISC-V test suite and successfully deployed on a Lattice ECP5 FPGA.</p>
+        </td>
+      </tr>
+
+      <tr onmouseover="hoverShow('csr')" onmouseout="hoverHide('csr')">
+        <td style="padding:16px;width:20%;vertical-align:middle;">
+          <div class="thumb-wrap">
+            <img src="./projects/csr/cover_pic.png" alt="Efficient DNN via Pruning &amp; Sparse Matrix Compression">
+            <div class="thumb-hover" id="csr-hover">
+              <img src="projects/csr/cover_pic.png" alt="">
+            </div>
+          </div>
+        </td>
+        <td style="padding:8px 20px;width:80%;vertical-align:middle;">
+          <a href="./projects/csr/csr.html"><span class="papertitle">Efficient DNN via Pruning &amp; Sparse Matrix Compression</span></a><br>
+          <a href="./projects/csr/csr.html">project page</a> /
+          <a href="https://github.com/ESE-5390-Fall-2024/project-group-09">code</a>
+          <p class="proj-desc" lang="en">Conducted an empirical analysis of pruning patterns across varying sparsity levels and designed a custom CSR-based linear layer to reduce memory footprint and accelerate inference while preserving model accuracy.</p>
+        </td>
+      </tr>
+
+      <tr onmouseover="hoverShow('clb')" onmouseout="hoverHide('clb')">
+        <td style="padding:16px;width:20%;vertical-align:middle;">
+          <div class="thumb-wrap">
+            <img src="./projects/clb/cover_pic.png" alt="Configurable Logic Block Design, Verification and Optimization">
+            <div class="thumb-hover" id="clb-hover">
+              <img src="projects/clb/cover_pic.png" alt="">
+            </div>
+          </div>
+        </td>
+        <td style="padding:8px 20px;width:80%;vertical-align:middle;">
+          <a href="./projects/clb/clb.html"><span class="papertitle">Configurable Logic Block Design, Verification and Optimization</span></a><br>
+          <a href="./projects/clb/clb.html">project page</a>
+          <p class="proj-desc" lang="en">Designed a 16-bit Configurable Logic Block (CLB) in Cadence 45 nm Salicide (1.0 V / 1.8 V, 1P11M) technology. The CLB integrates a 16:1 LUT, SRAM-based memory, SIPO register, and a clock generator. Thoroughly verified and optimized to mitigate timing hazards while balancing power and performance.</p>
+        </td>
+      </tr>
+
+      <tr onmouseover="hoverShow('f1tenth')" onmouseout="hoverHide('f1tenth')">
+        <td style="padding:16px;width:20%;vertical-align:middle;">
+          <div class="thumb-wrap">
+            <img src="./projects/f1tenth/thumbnail.png" alt="Auto-driving Engines for F1/10">
+            <div class="thumb-hover" id="f1tenth-hover">
+              <video muted autoplay loop><source src="projects/f1tenth/thumbnail.mp4" type="video/mp4"></video>
+            </div>
+          </div>
+        </td>
+        <td style="padding:8px 20px;width:80%;vertical-align:middle;">
+          <a href="./projects/f1tenth/f1tenth.html"><span class="papertitle">Auto-driving Engines for F1/10</span></a><br>
+          <a href="./projects/f1tenth/f1tenth.html">project page</a> /
+          <a href="https://github.com/anh-thh/cis5710-homework.git">code</a>
+          <p class="proj-desc" lang="en">Built an autonomous driving stack for F1/10-scale cars, combining SLAM-based localization, motion planning, optimal control, and deep learning perception into a unified pipeline. The full system was integrated and tested on the F1TENTH RoboRacer platform.</p>
+        </td>
+      </tr>
+
+      <tr onmouseover="hoverShow('lc3')" onmouseout="hoverHide('lc3')">
+        <td style="padding:16px;width:20%;vertical-align:middle;">
+          <div class="thumb-wrap">
+            <img src="./projects/lc3/thumbnail.png" alt="LC3 Simulator">
+            <div class="thumb-hover" id="lc3-hover">
+              <video muted autoplay loop><source src="assets/projects/lc3/thumbnail.mp4" type="video/mp4"></video>
+            </div>
+          </div>
+        </td>
+        <td style="padding:8px 20px;width:80%;vertical-align:middle;">
+          <a href="https://github.com/anh-thh/lc3-virtual-machine" target="_blank" rel="noopener"><span class="papertitle">LC3 Simulator</span></a><br>
+          <a href="https://github.com/anh-thh/lc3-virtual-machine">code</a>
+          <p class="proj-desc" lang="en">Implemented a C-based simulator for the LC-3 (Little Computer-3) instruction set architecture. Validated by running benchmark assembly programs including interactive applications such as 2048, Hangman, and Rogue.</p>
+        </td>
+      </tr>
+
+      <tr onmouseover="hoverShow('solar')" onmouseout="hoverHide('solar')">
+        <td style="padding:16px;width:20%;vertical-align:middle;">
+          <div class="thumb-wrap">
+            <img src="./projects/auto_solartracker/thumbnail.png" alt="Automatic Solar Tracker">
+            <div class="thumb-hover" id="solar-hover">
+              <video muted autoplay loop><source src="projects/auto_solartracker/thumbnail.mp4" type="video/mp4"></video>
+            </div>
+          </div>
+        </td>
+        <td style="padding:8px 20px;width:80%;vertical-align:middle;">
+          <a href="https://github.com/anh-thh/auto-solar-tracker" target="_blank" rel="noopener"><span class="papertitle">Automatic Solar Tracker</span></a><br>
+          <a href="https://github.com/anh-thh/auto-solar-tracker">code</a>
+          <p class="proj-desc" lang="en">Built a dual-axis solar tracking system using LDR-based light sensing and closed-loop servo control to continuously orient a panel toward peak irradiance. The control logic was implemented in embedded C on a Tiva TM4C123GH6PM microcontroller.</p>
+        </td>
+      </tr>
+    </tbody></table>
+
+    <!-- ── Contact ── -->
+    <table id="contact" style="width:100%;border:0;border-spacing:0;border-collapse:separate;margin:0 auto;"><tbody>
+      <tr>
+        <td class="section-heading">
+          <h2>Contact</h2>
+          <p>
+  Feel free to reach out via email:<br>
+  <a href="mailto:anhthh@seas.upenn.edu">anhthh@seas.upenn.edu</a><br>
+  <a href="mailto:tranhuyhoanganh220702@gmail.com">tranhuyhoanganh220702@gmail.com</a>
+</p>
+<p>Or connect on LinkedIn as <a href="https://www.linkedin.com/in/anh-thh/">Huy Hoang Anh Tran</a>.</p>
+        </td>
+      </tr>
+    </tbody></table>
+
+    <!-- ── Footer ── -->
+    <table style="width:100%;border:0;border-spacing:0;border-collapse:separate;margin:0 auto;"><tbody>
+      <tr>
+        <td style="padding:0 16px 16px;">
+          <p class="footer">This website is maintained by Anh Tran, inspired by <a href="https://jonbarron.info/" style="font-size:12px;">jonbarron_website</a></p>
+        </td>
+      </tr>
+    </tbody></table>
+
+  </td></tr>
+  </tbody></table>
+
+  <script>
+    function hoverShow(id) { document.getElementById(id + '-hover').style.opacity = '1'; }
+    function hoverHide(id) { document.getElementById(id + '-hover').style.opacity = '0'; }
+    const bar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      bar.style.width = (pct * 100) + '%';
+    });
+  </script>
+
+</body>
+</html>

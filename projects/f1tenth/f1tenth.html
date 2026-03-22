@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auto-driving Engines for F1/10</title>
+  <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+
+  <style>
+    :root {
+      --max-width: 864px;
+      --accent: #007bff;
+      --pad-x: 1rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      margin-bottom: 40px;
+      zoom: 0.95;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+    .navbar__inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      padding: 8px var(--pad-x);
+      gap: 20px;
+    }
+    .navbar__brand {
+      margin-right: auto;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: #333;
+    }
+    .navbar__link {
+      font-size: 1rem;
+      text-decoration: none;
+      color: #333;
+    }
+    .navbar__brand:hover,
+    .navbar__link:hover { color: var(--accent); }
+
+    .scroll-progress {
+      height: 2px;
+      width: 0%;
+      background-color: var(--accent);
+      transition: width 0.1s ease-out;
+    }
+
+    /* ── Page layout ── */
+    .page-wrapper {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.5rem var(--pad-x) 0;
+    }
+
+    /* ── Typography ── */
+    .page-wrapper p,
+    .page-wrapper li {
+      text-align: justify;
+      overflow-wrap: break-word;
+    }
+
+    /* ── Images ── */
+    .page-wrapper img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ── Figure rows ── */
+    .figure-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .figure-row figure {
+      flex: 1 1 200px;
+      max-width: 400px;
+      text-align: center;
+    }
+    .figure-row figure.figure--sm { max-width: 300px; }
+    .figure-row figure.figure--lg { max-width: 550px; }
+    .figure-row figure.figure--xs { max-width: 200px; }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="navbar__inner">
+      <a href="../../index.html"          class="navbar__brand">Anh Tran</a>
+      <a href="../../index.html#about"    class="navbar__link">about</a>
+      <a href="../../index.html#projects" class="navbar__link">projects</a>
+      <a href="../../misc/misc.html"      class="navbar__link">misc</a>
+      <a href="../../index.html#contact"  class="navbar__link">contact</a>
+    </div>
+    <div class="scroll-progress" id="scroll-progress"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <header style="text-align:center; margin-bottom: 2rem;">
+      <h2>Autonomous Driving Engines for F1/10 Racing Car</h2>
+    </header>
+    <main>
+      <p><em>A big shoutout to my incredible teammates — Prakriti Prasad, Shreyas Muthusamy, and Shubhodeep
+Aditya — who stood by me through an unforgettable semester. From countless sleepless nights of
+debugging to all the shared moments of frustration and small wins, I've learned so much from each
+of you.</em></p>
+<p>This is a compilation of the methods that we have developed for our F1/10 cars for the labs and
+races in the course <strong>ESE 6150 - Autonomous Racing Cars</strong> @ University of Pennsylvania.</p>
+<p><em>Please note that all animations in this article are displayed at 2x speed.</em></p>
+<h3>Table of Contents</h3>
+<ul>
+<li><a href="#reactive">1. Reactive Methods</a></li>
+<li><a href="#planning">2. Planning-based Methods</a></li>
+</ul>
+<h3 id="reactive">1. Reactive Methods</h3>
+<p>Reactive methods are control strategies that utilize real-time sensor data to generate immediate
+responses without relying on complex planning or mapping, making them effective when the agent
+lacks prior knowledge about the surrounding environment. However, these approaches are quite
+sensitive to noise and uncertainty, have limited adaptability to complex scenarios, and often
+yield suboptimal behaviors.</p>
+<h5>Wall-following</h5>
+<p>The very first algorithm we employed was PID wall-following. Its principle is straightforward:
+the robot navigates along the wall while maintaining a fixed distance. The PID controller adjusts
+the steering angle to keep the distance between the agent and the wall constant.</p>
+<figure style="text-align:center;">
+  <img src="./wall-follow-levined-blocked.gif" alt="PID wall-following" style="max-width:50%;">
+  <figcaption>PID wall-following</figcaption>
+</figure>
+
+<p>This algorithm has a relatively simple implementation; however, it demands extensive time for
+tuning the PID gains. Moreover, it is inefficient in handling environmental irregularities — for
+example, it struggles with sharp turns and indentations. Finally, achieving high velocities is
+almost impossible, as evidenced by significant wobbling even at a low speed, which would be
+exacerbated at higher speeds.</p>
+<h5>Gap-following</h5>
+<p>By identifying the nearest obstacles or sharp disparities in the LIDAR data and masking out an
+area corresponding to the agent's size, the gap-following algorithm defines "gaps" (open spaces)
+for navigation. The agent then moves toward the gap that is widest or extends the farthest.</p>
+<div class="figure-row">
+  <figure>
+    <img src="./gap-follow-levine-blocked.gif" alt="Gap-following no obstacle">
+    <figcaption>Gap-following in obstacle-free map</figcaption>
+  </figure>
+  <figure>
+    <img src="./gap-follow-levine-obs.gif" alt="Gap-following with obstacle">
+    <figcaption>Gap-following in obstacle map</figcaption>
+  </figure>
+</div>
+
+<p>Apparently, this algorithm allows for much smoother motion and higher speeds than wall-following. Additionally, thanks to its smooth and stable motion, the robot can more easily avoid obstacles while navigating an unknown environment (at a conservative speed). However, it still exhibits the inherent limitation of reactive methods, namely that the generated trajectories are likely to be suboptimal</p>
+<h3 id="planning">2. Planning-based Methods</h3>
+<p>Reactive strategies are effective in well-structured and predictable environments but often struggle with local minima and unexpected oscillatory behavior. However, in racing, where even a few milliseconds can make a huge difference, optimal and efficient navigation is essential. Planning-based methods address this need by leveraging available environmental information (e.g., maps, constraints) or prior experience (e.g., recorded paths), resulting in more stable and (hopefully) near-optimal performance</p>
+<h5>Pure Pursuit</h5>
+<p>Given a pre-planned trajectory and the agent’s ability to accurately localize itself in the environment (e.g., via SLAM and a particle filter), the pure pursuit algorithm generates driving commands that target points at a fixed look-ahead distance along the planned path.</p>
+<div class="figure-row">
+  <figure>
+    <img src="./pure-pursuit-slam-levine.gif" alt="Pure pursuit SLAM">
+    <figcaption>Pure pursuit with SLAM localization</figcaption>
+  </figure>
+  <figure>
+    <img src="./pure-pursuit-fastest.gif" alt="Pure pursuit smoothened">
+    <figcaption>Pure pursuit at maximum speed</figcaption>
+  </figure>
+</div>
+
+<p>Despite its surprising simplicity, this algorithm delivers superior speed and stability compared
+to reactive approaches. Additionally, developers can easily combine it with other methods to
+optimize the input trajectory or speed management, further improving lap times.</p>
+<p style="text-align:center; font-style:italic; margin-top: 2rem;">
+  The project is currently in progress and will be updated in the near future.<br>
+  If you have any questions or are interested in the project, please
+  <a href="../../index.html#contact">contact me</a> for further information.
+</p>
+    </main>
+  </div>
+
+  <script>
+    const bar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      bar.style.width = (pct * 100) + '%';
+    });
+  </script>
+
+</body>
+</html>
