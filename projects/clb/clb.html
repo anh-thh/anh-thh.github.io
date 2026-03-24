@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Configurable Logic Block Design</title>
-  <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheet.css">
 
   <style>
     :root {
@@ -106,11 +106,11 @@
 
   <nav>
     <div class="navbar__inner">
-      <a href="../../index.html"          class="navbar__brand">Anh Tran</a>
-      <a href="../../index.html#about"    class="navbar__link">about</a>
-      <a href="../../index.html#projects" class="navbar__link">projects</a>
-      <a href="../../misc/misc.html"      class="navbar__link">misc</a>
-      <a href="../../index.html#contact"  class="navbar__link">contact</a>
+      <a href="/index.html"          class="navbar__brand">Anh Tran</a>
+      <a href="/index.html#about"    class="navbar__link">about</a>
+      <a href="/index.html#projects" class="navbar__link">projects</a>
+      <a href="/misc/misc.html"      class="navbar__link">misc</a>
+      <a href="/index.html#contact"  class="navbar__link">contact</a>
     </div>
     <div class="scroll-progress" id="scroll-progress"></div>
   </nav>
@@ -124,96 +124,111 @@
 a circuit that can model any 4-input combinational logic function. It is an essential building block
 that provides flexibility for Field Programmable Gate Arrays (FPGAs). The circuit was developed in
 <strong>45nm Salicide 1.0V/1.8V 1P 11M</strong> technology supported in Cadence.</p>
+
 <p>The CLB is composed of four key components:</p>
+
 <ul>
-<li><a href="#lut">16:1 Lookup Table (LUT)</a></li>
-<li><a href="#sram">SRAM Array</a></li>
-<li><a href="#sipo">Serial In Parallel Out (SIPO) Register</a></li>
-<li><a href="#clk">Non-overlapping Clock Generator</a></li>
+  <li><a href="#lut">16:1 Lookup Table (LUT)</a></li>
+  <li><a href="#sram">SRAM Array</a></li>
+  <li><a href="#sipo">Serial In Parallel Out (SIPO) Register</a></li>
+  <li><a href="#clk">Non-overlapping Clock Generator</a></li>
 </ul>
+
 <p>All of which are integrated into the final <a href="#clb">Configurable Logic Block</a>.</p>
+
 <h3 id="lut">16:1 Lookup Table (LUT)</h3>
+
 <p>The LUT accepts 4 binary inputs and stores 16 output values—one for each of the 2<sup>4</sup> possible input combinations. The inputs act as selectors that choose the corresponding pre-stored output. The beauty of the LUT is its configurability: by reprogramming the pre-stored array, the LUT can implement any 4-input logic function.</p>
+
 <div class="figure-row">
   <figure>
-    <img src="./lut/mux21.png" alt="2:1 Multiplexer schematic">
+    <img src="./lut/mux21.png" alt="2:1 Multiplexer schematic" />
     <figcaption>2:1 Multiplexer schematic</figcaption>
   </figure>
   <figure class="figure--sm">
-    <img src="./lut/mux21_sym.png" alt="2:1 Multiplexer symbol">
+    <img src="lut/mux21_sym.png" alt="2:1 Multiplexer symbol" />
     <figcaption>2:1 Multiplexer symbol</figcaption>
   </figure>
 </div>
 
 <p>We start with the design of a 2:1 MUX (similar to LUT, it selects one of two outputs based on a select line). A LUT can be constructed by connecting 15 MUXes in a tree structure, as shown below. Two CMOS logic inverters at the output serve as a buffer, restoring the voltage after pass-transistor logic degradation in the MUXes</p>
+
 <div class="figure-row">
   <figure>
-    <img src="./lut/lut.png" alt="16-input LUT schematic">
+    <img src="lut/lut.png" alt="16-input LUT schematic" />
     <figcaption>16-input LUT schematic</figcaption>
   </figure>
   <figure class="figure--sm">
-    <img src="./lut/lut_symb.png" alt="LUT symbol">
+    <img src="lut/lut_symb.png" alt="LUT symbol" />
     <figcaption>LUT symbol</figcaption>
   </figure>
 </div>
 
 <h3 id="sram">SRAM Array</h3>
-<p>The LUT's 16 output values are stored in an SRAM array. Each cell is a standard 6T design, controlled via Bit lines (BL / <span style="text-decoration:overline">BL</span>) and a Word line (WL) through precharge and discharge. See this <a href="https://youtu.be/kU2SsUUsftA?si=ze4-9zVNDbIH421l" target="_blank" rel="noopener">tutorial</a> for a detailed walkthrough of SRAM operation.</p>
+
+<p>The LUT’s 16 output values are stored in an SRAM array. Each cell is a standard 6T design, controlled via Bit lines (BL / <span style="text-decoration:overline">BL</span>) and a Word line (WL) through precharge and discharge. See this <a href="https://youtu.be/kU2SsUUsftA?si=ze4-9zVNDbIH421l" target="_blank" rel="noopener">tutorial</a> for a detailed walkthrough of SRAM operation.</p>
+
 <div class="figure-row">
   <figure>
-    <img src="./sram/sram_cell.png" alt="6T SRAM cell">
+    <img src="sram/sram_cell.png" alt="6T SRAM cell" />
     <figcaption>6T SRAM cell</figcaption>
   </figure>
   <figure class="figure--sm">
-    <img src="./sram/sram_symbol.png" alt="SRAM cell symbol">
+    <img src="sram/sram_symbol.png" alt="SRAM cell symbol" />
     <figcaption>SRAM cell symbol</figcaption>
   </figure>
 </div>
 
 <p>To make the cell easier to integrate, we wrapped it with a small peripheral interface exposing
 five I/O signals:</p>
+
 <ul>
-<li><strong>PC</strong>: Precharge control</li>
-<li><strong>W_EN</strong>: Write enable</li>
-<li><strong>WL</strong>: Word line</li>
-<li><strong>DATA</strong>: Write input</li>
-<li><strong>OUT</strong>: Read output</li>
+  <li><strong>PC</strong>: Precharge control</li>
+  <li><strong>W_EN</strong>: Write enable</li>
+  <li><strong>WL</strong>: Word line</li>
+  <li><strong>DATA</strong>: Write input</li>
+  <li><strong>OUT</strong>: Read output</li>
 </ul>
+
 <div class="figure-row">
   <figure>
-    <img src="./sram/sram_cell_full.png" alt="6T SRAM cell with peripherals">
+    <img src="sram/sram_cell_full.png" alt="6T SRAM cell with peripherals" />
     <figcaption>6T SRAM cell with peripherals</figcaption>
   </figure>
   <figure class="figure--sm">
-    <img src="./sram/sram_cell_full_symbol.png" alt="SRAM cell symbol">
+    <img src="sram/sram_cell_full_symbol.png" alt="SRAM cell symbol" />
     <figcaption>SRAM symbol</figcaption>
   </figure>
 </div>
 
 <p>Sixteen identical cells are tiled into the final 16-bit array:</p>
+
 <figure style="text-align:center;">
-  <img src="./sram/sram_array.png" alt="16-bit SRAM array">
+  <img src="sram/sram_array.png" alt="16-bit SRAM array" />
   <figcaption>16-bit SRAM array</figcaption>
 </figure>
 
 <h3 id="sipo">Serial In Parallel Out (SIPO) Register</h3>
+
 <p>Loading 16 bits into the SRAM in parallel would require 16 dedicated input pins. However, for simplicity and minimal layout area, we instead use a SIPO shift register to serialize the data: it accepts one bit per clock cycle and outputs all 16 bits simultaneously once shifting is complete.</p>
+
 <div class="figure-row">
   <figure class="figure--lg">
-    <img src="./sipo/ff_noQ_circuit.png" alt="D Flip-Flop schematic">
+    <img src="sipo/ff_noQ_circuit.png" alt="D Flip-Flop schematic" />
     <figcaption>D Flip-Flop schematic</figcaption>
   </figure>
   <figure class="figure--xs">
-    <img src="./sipo/ff_noQ_symbol.png" alt="D Flip-Flop symbol">
+    <img src="sipo/ff_noQ_symbol.png" alt="D Flip-Flop symbol" />
     <figcaption>D Flip-Flop symbol</figcaption>
   </figure>
 </div>
 
 <p>The SIPO is built by cascading 16 D flip-flops. Each clock edge shifts the data one stage forward; the full word is available after 16 cycles</p>
+
 <div class="figure-row">
-  <img src="./sipo/shift-register-w-arrow.gif" alt="Shift register animation" style="max-width:50%">
-  <img src="./sipo/sipo_visualization.png"     alt="SIPO register visualization" style="max-width:50%">
-  <img src="./sipo/SIPO-1024x452.png"          alt="SIPO register schematic" style="max-width:50%">
+  <img src="sipo/shift-register-w-arrow.gif" alt="Shift register animation" style="max-width:50%" />
+  <img src="sipo/sipo_visualization.png" alt="SIPO register visualization" style="max-width:50%" />
+  <img src="sipo/SIPO-1024x452.png" alt="SIPO register schematic" style="max-width:50%" />
 </div>
 
 <p style="text-align:center;">
@@ -222,56 +237,65 @@ five I/O signals:</p>
 </p>
 
 <h3 id="clk">Non-overlapping Clock Generator</h3>
+
 <p>The SIPO requires both CLK and <span style="text-decoration:overline">CLK</span> (see the D flip-flop schematic), so we design a non-overlapping clock generator to produce two complementary signals.</p>
+
 <div class="figure-row">
   <figure class="figure--lg">
-    <img src="./clk/clock_circuit.png" alt="Non-overlapping clock generator schematic">
+    <img src="clk/clock_circuit.png" alt="Non-overlapping clock generator schematic" />
     <figcaption>Clock generator schematic</figcaption>
   </figure>
   <figure class="figure--xs">
-    <img src="./clk/clock_symbol.png" alt="Clock generator symbol">
+    <img src="clk/clock_symbol.png" alt="Clock generator symbol" />
     <figcaption>Clock generator symbol</figcaption>
   </figure>
 </div>
 
 <h3 id="clb">Configurable Logic Block (CLB)</h3>
+
 <p>With all four modules complete, they are wired together into the full CLB: the SIPO feeds serial
-configuration data into the SRAM, the SRAM drives the LUT's data inputs, and the non-overlapping
+configuration data into the SRAM, the SRAM drives the LUT’s data inputs, and the non-overlapping
 clock coordinates timing across the entire pipeline.</p>
+
 <figure style="text-align:center; margin-bottom: 1.5rem;">
-  <img src="./CLB_full_design.png" alt="Complete CLB schematic">
+  <img src="CLB_full_design.png" alt="Complete CLB schematic" />
   <figcaption>Complete CLB schematic</figcaption>
 </figure>
 
-<h4>Performance Metrics</h4>
+<h4 id="performance-metrics">Performance Metrics</h4>
+
 <p>Post-layout benchmarking on the full design yielded the following results:</p>
-<table class="table table-bordered text-center w-75 mx-auto">
-<thead>
-<tr>
-<th>Metric</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Max operating frequency</td>
-<td>1 GHz</td>
-</tr>
-<tr>
-<td>Loading energy</td>
-<td>3.212 × 10⁻³ nJ</td>
-</tr>
-<tr>
-<td>Active energy</td>
-<td>1.895 × 10⁻³ nJ</td>
-</tr>
-</tbody>
+
+<table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Max operating frequency</td>
+      <td>1 GHz</td>
+    </tr>
+    <tr>
+      <td>Loading energy</td>
+      <td>3.212 × 10⁻³ nJ</td>
+    </tr>
+    <tr>
+      <td>Active energy</td>
+      <td>1.895 × 10⁻³ nJ</td>
+    </tr>
+  </tbody>
 </table>
-<p><em>Loading energy</em>: energy to shift all 16 configuration bits into the SRAM.<br />
+
+<p><em>Loading energy</em>: energy to shift all 16 configuration bits into the SRAM.
 <em>Active energy</em>: energy to cycle through all 16 input combinations (i.e., from 0x0 to 0xF) at max frequency.</p>
+
 <p>That covers the full design flow for our 16-bit CLB. Details on transistor sizing, schematic
 verification, timing-hazard resolution, and circuit-level optimization are available upon request —
-feel free to <a href="../../index.html#contact">reach out</a> 😀</p>
+feel free to <a href="/index.html#contact">reach out</a> 😀</p>
+
     </main>
   </div>
 
