@@ -144,7 +144,8 @@ curl <span class="nt">--proto</span> <span class="s1">'=https'</span> <span clas
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -- fzf ------------------------------------------</span>
 <span class="c"># [ -f ~/.fzf.bash ] &amp;&amp; source ~/.fzf.bash</span>
 <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.fzf/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
-<span class="nv">FZF_CTRL_R_COMMAND</span><span class="o">=</span> <span class="nv">FZF_ALT_C_COMMAND</span><span class="o">=</span> <span class="nb">eval</span> <span class="s2">"</span><span class="si">$(</span>fzf <span class="nt">--bash</span><span class="si">)</span><span class="s2">"</span>
+<span class="c"># FZF_CTRL_R_COMMAND= FZF_ALT_C_COMMAND= eval "$(fzf --bash)"</span>
+<span class="nv">FZF_CTRL_R_COMMAND</span><span class="o">=</span> <span class="nb">eval</span> <span class="s2">"</span><span class="si">$(</span>fzf <span class="nt">--bash</span><span class="si">)</span><span class="s2">"</span>
 
 <span class="c"># -- atuin ------------------------------------------</span>
 <span class="nb">.</span> <span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.atuin/bin/env"</span>
@@ -161,6 +162,8 @@ rm -rf ~/.atuin
 rm -f ~/.bash-preexec.sh
 </code></pre></div></div>
 <p>and clean up <code class="language-plaintext highlighter-rouge">~/.bashrc</code></p>
+
+<p><em>NOTE:</em> in some terminals, <code class="language-plaintext highlighter-rouge">&lt;esc&gt;</code> = <code class="language-plaintext highlighter-rouge">&lt;alt&gt;</code> and this is quite annoying as it causes a few conflicts with <code class="language-plaintext highlighter-rouge">&lt;alt&gt;+c</code>.</p>
 
 
     </main>
