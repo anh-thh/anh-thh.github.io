@@ -203,6 +203,12 @@ span.highlight {
   font-weight: 600;
 }
 
+/* Bibliography: IEEE style already provides [1][2]..., suppress ol numbering */
+ol.bibliography {
+  list-style: none;
+  padding-left: 0;
+}
+
 /* Figure captions: breathing room + subdued style */
 .page-wrapper figcaption {
   margin-top: 0.5rem;

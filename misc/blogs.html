@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blogs</title>
+  <link rel="stylesheet" type="text/css" href="/stylesheet.css">
+
+  <style>
+    :root {
+      --max-width: 864px;
+      --accent: #007bff;
+      --pad-x: 1rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      margin-bottom: 40px;
+      zoom: 0.95;
+    }
+
+    /* -- Navbar -- */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+    .navbar__inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      padding: 8px var(--pad-x);
+      gap: 20px;
+    }
+    .navbar__brand {
+      margin-right: auto;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: #333;
+    }
+    .navbar__link {
+      font-size: 1rem;
+      text-decoration: none;
+      color: #333;
+    }
+    .navbar__brand:hover,
+    .navbar__link:hover { color: var(--accent); }
+
+    .scroll-progress {
+      height: 2px;
+      width: 0%;
+      background-color: var(--accent);
+      transition: width 0.1s ease-out;
+    }
+
+    /* -- Page layout -- */
+    .page-wrapper {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.5rem var(--pad-x) 0;
+    }
+
+    /* -- Typography -- */
+    .page-wrapper p,
+    .page-wrapper li {
+      text-align: justify;
+      overflow-wrap: break-word;
+    }
+
+    /* -- Images -- */
+    .page-wrapper img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* -- Figure rows -- */
+    .figure-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .figure-row figure {
+      flex: 1 1 200px;
+      max-width: 400px;
+      text-align: center;
+    }
+    .figure-row figure.figure--sm { max-width: 300px; }
+    .figure-row figure.figure--lg { max-width: 550px; }
+    .figure-row figure.figure--xs { max-width: 200px; }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="navbar__inner">
+      <a href="/index.html"          class="navbar__brand">Anh Tran</a>
+      <a href="/index.html#about"    class="navbar__link">about</a>
+      <a href="/index.html#projects" class="navbar__link">projects</a>
+      <a href="/misc/misc.html"      class="navbar__link">misc</a>
+      <a href="/index.html#contact"  class="navbar__link">contact</a>
+    </div>
+    <div class="scroll-progress" id="scroll-progress"></div>
+  </nav>
+
+  <div class="page-wrapper">
+    <header style="text-align:center; margin-bottom: 2rem;">
+      <h2>Blogs</h2>
+    </header>
+    <main>
+      <h2 id="start-with-fzf-and-atuin">start with <code class="language-plaintext highlighter-rouge">fzf</code> and <code class="language-plaintext highlighter-rouge">atuin</code></h2>
+<p><em>Date: Mar 25, 2026</em></p>
+
+<p>Recently started using <a href="https://github.com/junegunn/fzf"><code class="language-plaintext highlighter-rouge">fzf</code></a> + <a href="https://atuin.sh"><code class="language-plaintext highlighter-rouge">atuin</code></a> together, and honestly… this combo slaps.   <br />
+They make it ridiculously fast to:</p>
+<ul>
+  <li>search command history (even across sessions)</li>
+  <li>jump to files or directories</li>
+  <li>debug random artifacts without remembering exact paths</li>
+</ul>
+
+<h5 id="install">install</h5>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># fzf (Ubuntu/Debian)</span>
+git clone <span class="nt">--depth</span> 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+<span class="c"># atuin</span>
+curl <span class="nt">--proto</span> <span class="s1">'=https'</span> <span class="nt">--tlsv1</span>.2 <span class="nt">-LsSf</span> https://setup.atuin.sh | sh
+</code></pre></div></div>
+
+<h5 id="bash-config-bashrc">bash config (<code class="language-plaintext highlighter-rouge">~/.bashrc</code>)</h5>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -- fzf ------------------------------------------</span>
+<span class="c"># [ -f ~/.fzf.bash ] &amp;&amp; source ~/.fzf.bash</span>
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.fzf/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
+<span class="nv">FZF_CTRL_R_COMMAND</span><span class="o">=</span> <span class="nv">FZF_ALT_C_COMMAND</span><span class="o">=</span> <span class="nb">eval</span> <span class="s2">"</span><span class="si">$(</span>fzf <span class="nt">--bash</span><span class="si">)</span><span class="s2">"</span>
+
+<span class="c"># -- atuin ------------------------------------------</span>
+<span class="nb">.</span> <span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.atuin/bin/env"</span>
+<span class="o">[[</span> <span class="nt">-f</span> ~/.bash-preexec.sh <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nb">source</span> ~/.bash-preexec.sh
+<span class="nb">eval</span> <span class="s2">"</span><span class="si">$(</span>atuin init bash<span class="si">)</span><span class="s2">"</span>
+</code></pre></div></div>
+<h5 id="uninstall">uninstall</h5>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># -- fzf ------------------------------------------
+~/.fzf/uninstall 2&gt;&amp;1; echo "Exit: $?"
+rm -rf ~/.fzf &amp;&amp; echo "Removed ~/.fzf"
+
+# -- atuin ------------------------------------------
+rm -rf ~/.atuin
+rm -f ~/.bash-preexec.sh
+</code></pre></div></div>
+<p>and clean up <code class="language-plaintext highlighter-rouge">~/.bashrc</code></p>
+
+
+    </main>
+  </div>
+
+  <script>
+    const bar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      bar.style.width = (pct * 100) + '%';
+    });
+  </script>
+
+</body>
+</html>
