@@ -150,8 +150,12 @@ curl <span class="nt">--proto</span> <span class="s1">'=https'</span> <span clas
 <span class="c"># -- atuin ------------------------------------------</span>
 <span class="nb">.</span> <span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.atuin/bin/env"</span>
 <span class="o">[[</span> <span class="nt">-f</span> ~/.bash-preexec.sh <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nb">source</span> ~/.bash-preexec.sh
+<span class="c"># see https://docs.atuin.sh/cli/configuration/key-binding/#bash</span>
+<span class="nb">export </span><span class="nv">ATUIN_NOBIND</span><span class="o">=</span><span class="s2">"true"</span>
 <span class="nb">eval</span> <span class="s2">"</span><span class="si">$(</span>atuin init bash<span class="si">)</span><span class="s2">"</span>
+atuin-bind <span class="s1">'\C-r'</span> atuin-search
 </code></pre></div></div>
+
 <h5 id="uninstall">uninstall</h5>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># -- fzf ------------------------------------------
 ~/.fzf/uninstall 2&gt;&amp;1; echo "Exit: $?"
